@@ -74,13 +74,9 @@ static void assemble_triangle_inputs(Mesh* mesh, size_t tri_idx, VSin in[3]) {
 	}
 }
 
-static void assemble_triangle(Triangle* tri, VSout* out, int tri_idx) {
-	for(size_t i = 0; i <= 2; i++) tri->v[i] = &out[i];
-	tri->id = tri_idx;	
-}
-
-static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh, Material* mat, size_t tri_idx) {
-
+static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb, 
+				   Mesh* mesh, Material* mat, size_t tri_idx) 
+{
 	// try to get pipeline from material, otherwise use renderer default
 	const Pipeline* mat_p = material_get_pipeline(mat);
 	const Pipeline* p     = mat_p ? mat_p : r->p; 

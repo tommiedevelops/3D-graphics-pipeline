@@ -25,9 +25,9 @@ typedef struct App {
 } App;
 
 typedef struct AppVTable {
-	void (*on_init)(App* app, void* ud);
-	void (*on_start)(App* app,  void* ud);
-	void (*on_event)(App* app,  void* ud, SDL_Event* e);
+	void (*on_init)(App* app, void* ud);   // setting up resources & scene
+	void (*on_start)(App* app,  void* ud); // initial state of the scene
+	void (*on_event)(App* app,  void* ud, SDL_Event* e); 
 	void (*on_update)(App* app, void* ud, float dt);
 	void (*on_shutdown)(App* app, void* ud);
 	void* user_data;

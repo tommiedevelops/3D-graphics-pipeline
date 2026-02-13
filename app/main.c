@@ -22,8 +22,10 @@ void on_init(App* app, void* game_data) {
 
 	// wall material
 	Texture* tex = texture_load("assets/textures/brickwall.png");		
-	Pipeline* p_wall = pipeline_create(vs_default, fs_unlit);
-	Material* m_wall = material_create(VEC4F_0, tex, p_wall);
+	Pipeline* p_wall = pipeline_create(vs_default, fs_lit);
+
+	Vec4f col = (Vec4f){1.0f,0.0f,1.0f,1.0f};
+	Material* m_wall = material_create(col, NULL, p_wall);
 	assets_add_material(app->assets, m_wall, "floor");
 }
 
@@ -66,9 +68,8 @@ void on_start(App* app, void* game_data) {
 	Mesh *mesh = assets_get_mesh(app->assets, "plane");
 	Material *mat = assets_get_material(app->assets, "floor");
 
-	Vec3f floor_scale = (Vec3f){5.0f, 1.0f, 5.0f};
-	Quat rot = quat_angle_axis(3.1415/2, VEC3F_Z);
-	GameObj* floor = game_obj_create(transform_create(VEC3F_0, rot, floor_scale),
+	Quat rot = QUAT_IDENTITY;
+	GameObj* floor = game_obj_create(transform_create(VEC3F_0, rot, VEC3F_1),
 					mesh,
 					mat);
 

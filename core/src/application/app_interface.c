@@ -9,10 +9,10 @@ static void validate_vtable(AppVTable* v_table) {
 
 	int error = 0;
 
-	if(!v_table->on_init) error = 1;
-	if(!v_table->on_start) error = 1;
-	if(!v_table->on_event) error = 1;
-	if(!v_table->on_update) error = 1;
+	if(!v_table->on_init)     error = 1;
+	if(!v_table->on_start)    error = 1;
+	if(!v_table->on_event)    error = 1;
+	if(!v_table->on_update)   error = 1;
 	if(!v_table->on_shutdown) error = 1;
 
 	if(error) {
