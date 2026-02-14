@@ -1,4 +1,4 @@
-<h1 align="left">CPU Graphics Engine</h1>
+<h1 align="left">C Graphics Pipeline</h1>
 
 3D Graphics done on the CPU, not GPU. <em>"Why?"</em>, you might be asking. There are 3 main reasons:
 
@@ -17,7 +17,7 @@ If you want to learn how it works, I've captured my conceptual understanding in 
 
 ## Features
 - **Mesh Loading:** Import `.obj` files for 3D geometry stored as meshes.
-- **Texture Support:** Load `.png` files to create custom textures for materials.
+- **Texture Support:** Import `.png` files to create custom textures for materials.
 - **Scene Management:** Create, save and manage scenes with **Camera**, **Light** and **GameObject** structures 
 - **Programmable Shaders:** Define custom **Vertex** and **Fragment** shaders as C function pointers. 
 - **Interactive Rendering:** Control scenes at runtime via **SDL2 event handling** (keyboard, mouse, etc.)
