@@ -1,6 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include "renderer/texture.h"
 #include "renderer/clip.h"
 #include "renderer/triangle.h"
 #include "renderer/framebuffer.h"

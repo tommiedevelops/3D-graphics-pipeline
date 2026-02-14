@@ -2,9 +2,13 @@
 #define TEXTURE_H
 
 typedef struct Vec4f Vec4f;
-typedef struct Texture Texture;
 
-Texture* png_load(char* filename);
+typedef struct Texture {
+	int width;
+	int height;
+	Vec4f* map;
+} Texture;
+
 void texture_destroy(Texture* tex);
 Vec4f texture_sample(Texture* tex, float u, float v);
 

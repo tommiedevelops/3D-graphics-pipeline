@@ -5,6 +5,6 @@
 #include "asset_manager/material.h"
 #include "asset_manager/mesh.h"
 #include "asset_manager/obj_parser.h"
-#include "renderer/texture.h"
+#include "asset_manager/png_parser.h"
 
 #endif
