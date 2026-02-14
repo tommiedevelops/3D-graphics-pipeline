@@ -9,7 +9,7 @@ typedef struct Texture {
 	Vec4f* map;
 } Texture;
 
-Texture* texture_load(char* filename){
+Texture* png_load(char* filename){
 	int width, height, channels;
 	uint8_t* img = stbi_load(filename, &width, &height, &channels, 4);
 

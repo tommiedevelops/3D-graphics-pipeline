@@ -21,7 +21,7 @@ void on_init(App* app, void* game_data) {
 	mesh_recalculate_normals(plane_mesh);
 
 	// wall material
-	Texture* tex = texture_load("assets/textures/brickwall.png");		
+	Texture* tex = png_load("assets/textures/brickwall.png");		
 	Pipeline* p_wall = pipeline_create(vs_default, fs_lit);
 
 	Vec4f col = (Vec4f){1.0f,0.0f,1.0f,1.0f};
