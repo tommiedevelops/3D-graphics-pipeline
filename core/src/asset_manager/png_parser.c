@@ -5,6 +5,16 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "third_party/stb_image.h"
 
+struct PNG
+{
+	int width;
+	int height;
+	int channels;
+	uint8_t* img;
+};
+
+typedef struct PNG PNG;
+
 Texture* png_load(char* filename)
 {
 	int width, height, channels;
