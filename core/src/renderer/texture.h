@@ -9,7 +9,8 @@ typedef struct Texture {
 	Vec4f* map;
 } Texture;
 
-void texture_destroy(Texture* tex);
-Vec4f texture_sample(Texture* tex, float u, float v);
+Texture* texture_create(int width, int height);
+void     texture_destroy(Texture* tex);
+Vec4f    texture_sample(Texture* tex, float u, float v);
 
 #endif

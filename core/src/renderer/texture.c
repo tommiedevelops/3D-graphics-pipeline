@@ -2,6 +2,17 @@
 #include "game_math/vector.h"
 #include "texture.h"
 
+Texture* texture_create(int width, int height)
+{
+	int map_size = width * height;
+	Texture* tex = malloc(sizeof(Texture));
+	Vec4f*   map = calloc(map_size, sizeof(Vec4f));
+
+	tex->width  = width;
+	tex->height = height;
+	tex->map    = map;
+}
+
 void texture_destroy(Texture* tex){
 	if(!tex) return;
 	if(tex->map) free(tex->map);
