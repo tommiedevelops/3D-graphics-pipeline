@@ -15,35 +15,33 @@
 #include "renderer/vert_shader.h"
 #include "error_log.h"
 
-/// Initializes the six clipping planes of the canonical view volume given by
-/// y ∈ [-w,w] && x ∈ [-w,w] && z ∈ [0,1]
-/// 
-/// Normals are pointing "inside"
-static void calculate_clipping_planes(Plane4* planes){
-	//top (y = w)
-	planes[0].n = vec4f_create(0.0f, -1.0f, 0.0f, 1.0f);
-	planes[0].p = vec4f_create(0.0f, 1.0f, 0.0f, 1.0f);
+static const Plane4 kClipPlanes[] = {
+	{ // top (y = w)
+          .n = {0.0f, -1.0f, 0.0f, 1.0f},
+	  .p = {0.0f,  1.0f, 0.0f, 1.0f}
+	}, 
+	{ // bottom (y = -w)
+	  .n = {0.0f,  1.0f, 0.0f, 1.0f},
+	  .p = {0.0f, -1.0f, 0.0f, 1.0f}
+	},
+	{ // left ( x = -w )
+	  .n = { 1.0f, 0.0f, 0.0f, 1.0f},
+	  .p = {-1.0f, 0.0f, 0.0f, 1.0f}
+	},
+	{ // right ( x = -w )
+	  .n = {-1.0f, 0.0f, 0.0f, 1.0f},
+	  .p = {1.0f,  0.0f, 0.0f, 1.0f}
+	},
+	{ // near ( z = 0 )
+	  .n = {0.0f, 0.0f, 1.0f, 0.0f},
+	  .p = {0.0f, 0.0f, 0.0f, 0.0f}
+	}, 
+	{ // far ( z = w )
+	  .n = {0.0f, 0.0f, -1.0f, 1.0f},
+	  .p = {0.0f, 0.0f, 1.0f, 1.0f}
+	}
 
-	//bottom (y = -w)
-	planes[1].n = vec4f_create(0.0f, 1.0f, 0.0f, 1.0f);
-	planes[1].p = vec4f_create(0.0f, -1.0f, 0.0f, 1.0f);
-
-	// left (x = -w)
-	planes[2].n = vec4f_create(1.0f, 0.0f, 0.0f, 1.0f);
-	planes[2].p = vec4f_create(-1.0f, 0.0f, 0.0f, 1.0f);
-
-	// right (x = w)
-	planes[3].n = vec4f_create(-1.0f, 0.0f, 0.0f, 1.0f);
-	planes[3].p = vec4f_create(1.0f, 0.0f, 0.0f, 1.0f);
-
-	// near (z = 0)
-	planes[4].n = vec4f_create(0.0f, 0.0f, 1.0f, 0.0f);
-	planes[4].p = VEC4F_0;
-
-	// far (z = w)
-	planes[5].n = vec4f_create(0.0f, 0.0f, -1.0f, 1.0f);
-	planes[5].p = vec4f_create(0.0f, 0.0f, 1.0f, 1.0f);
-}
+};
 
 static void compute_intersection(VSout s, VSout e, VSout* i, float t) {
 	// assumes memory at &i already allocated
@@ -117,32 +115,9 @@ static inline void swap_ptrs(void** a, void** b) {
 	*b = temp;
 }
 
-/// Performs Sutherland-Hodgman clipping of a polygon (a triangle in this case)
-/// against an array of Planes representing the Vulkan Canonical View Volume.
-///
-/// Uses a 'Ping-Pong Buffer' solution to avoid having to allocate new memory
-///
-/// @param  in  Input triangle, assumed CCW winding
-/// @param  out Pre-allocated memory for the clip output. Minimum size of 16.
-/// @return     The number of vertices the clip output has. 
-
 int clip(const VSout in[3], VSout* out) {
 
-	if(!in || !out) {
-		LOG_ERROR("inputs were null");
-		return -1;
-	}
-	
-	const int NUM_PLANES = 6;
-	Plane4 planes[NUM_PLANES];
-	calculate_clipping_planes(planes);
-
-	// Ping-pong buffers: clip a triangle against NUM_PLANES without heap allocations.
-	// After each clip, we swap buffers so the next plane uses the newly clipped polygon.
-	
-	const int MAX_CLIP_VERTS = 16;
-	VSout bufA[MAX_CLIP_VERTS];
-	VSout bufB[MAX_CLIP_VERTS];
+	VSout bufA[16], bufB[16];
 
 	int sizeA = 3, sizeB = 0;
 
@@ -157,8 +132,8 @@ int clip(const VSout in[3], VSout* out) {
 
 	for(int i = 0; i < 3; i++) bufA[i] = in[i];
 	
-	for(int i = 0; i < NUM_PLANES; i++){
-		clip_against_plane(planes[i], 
+	for(int i = 0; i < 6; i++){
+		clip_against_plane(kClipPlanes[i], 
 				   in_ptr, *in_size_ptr,
 			       	   out_ptr, out_size_ptr);
 

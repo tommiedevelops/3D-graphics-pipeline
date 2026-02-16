@@ -49,10 +49,6 @@ void pipeline_destroy(Pipeline* p) {
 	free(p);
 }
 
-static inline void apply_vertex_shader(const VSin in[3], VSout out[3], const VSUniforms* vs_u, VertShaderF vertex_shader){
-	for(size_t i = 0; i < 3; i++) vertex_shader(&in[i], &out[i], vs_u);
-}
-
 static void assemble_triangle_inputs(const Mesh* const mesh, int tri_idx, 
 				     VSin in[3]) 
 {
@@ -96,22 +92,20 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 	const Pipeline* p     = mat_p ? mat_p : r->p; 
 
 	// input and output of the vertex shader
-	VSin     in[3];
-	VSout    out[3];
+	VSin  in[3];
+	VSout out[3];
 
 	assemble_triangle_inputs(mesh, tri_idx, in);
-	apply_vertex_shader(in, out, r->vs_u, p->vs);
 
 	for(int i = 0; i < 3; i++) 
 	{
-		float w = out[i].pos.w;
-		float w_inv = 1.0f/w;
-		out[i].w_inv = w_inv;
-		out[i].uv_over_w = vec2f_scale(out[i].uv, w_inv);
+		p->vs(&in[i], &out[i], r->vs_u); // apply vertex shader
+		// save perspective correct interpolation values
+		out[i].w_inv = 1.0f/out[i].pos.w;
+		out[i].uv_over_w = vec2f_scale(out[i].uv, out[i].w_inv);
 	}
 
 	VSout clip_out[9] = {0};
-
 	int out_n = clip(out, clip_out); 
 
 	Mat4 vp = r->vs_u->viewport;
