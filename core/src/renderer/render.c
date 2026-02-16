@@ -53,20 +53,34 @@ static inline void apply_vertex_shader(const VSin in[3], VSout out[3], const VSU
 	for(size_t i = 0; i < 3; i++) vertex_shader(&in[i], &out[i], vs_u);
 }
 
-static void assemble_triangle_inputs(Mesh* mesh, size_t tri_idx, VSin in[3]) {
-
-	for(int i = 0; i < 3; i++){
-
-		const int* tri_uvs = mesh->triangle_uvs;
+static void assemble_triangle_inputs(const Mesh* const mesh, int tri_idx, 
+				     VSin in[3]) 
+{
+	for(int i = 0; i < 3; i++)
+	{
+		const int* tri_uvs   = mesh->triangle_uvs;
 		const int* tri_norms = mesh->triangle_normals;
+		const int* tris      = mesh->triangles;
 
-		size_t pos_idx  = mesh->triangles[tri_idx + i];
-		size_t uv_idx   = tri_uvs ? mesh->triangle_uvs[tri_idx + i] : 0;
-		size_t n_idx    = tri_norms ? mesh->triangle_normals[tri_idx + i] : 0;
+		int pos_idx = tris[tri_idx + i];
+
+		int uv_idx  = tri_uvs 
+			    ? tri_uvs[tri_idx + i] 
+			    : 0;
+
+		int n_idx   = tri_norms 
+			    ? tri_norms[tri_idx + i] 
+			    : 0;
 
 		Vec3f pos = mesh->vertices[pos_idx];
-		Vec2f uv  = (mesh->uvs && tri_uvs) ? mesh->uvs[uv_idx] : VEC2F_0;
-		Vec3f n   = (mesh->normals && tri_norms) ? mesh->normals[n_idx] : VEC3F_0;
+
+		Vec2f uv  =  mesh->uvs && tri_uvs
+			  ?  mesh->uvs[uv_idx] 
+			  :  VEC2F_0;
+
+		Vec3f n   =  mesh->normals && tri_norms
+			  ?  mesh->normals[n_idx] 
+			  :  VEC3F_0;
 		
 		in[i].pos = pos;
 		in[i].n = n;
@@ -74,8 +88,8 @@ static void assemble_triangle_inputs(Mesh* mesh, size_t tri_idx, VSin in[3]) {
 	}
 }
 
-static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb, 
-				   Mesh* mesh, Material* mat, size_t tri_idx) 
+static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,  
+		          Material* mat, int tri_idx) 
 {
 	// try to get pipeline from material, otherwise use renderer default
 	const Pipeline* mat_p = material_get_pipeline(mat);
@@ -88,7 +102,8 @@ static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb,
 	assemble_triangle_inputs(mesh, tri_idx, in);
 	apply_vertex_shader(in, out, r->vs_u, p->vs);
 
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 3; i++) 
+	{
 		float w = out[i].pos.w;
 		float w_inv = 1.0f/w;
 		out[i].w_inv = w_inv;
@@ -100,7 +115,8 @@ static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb,
 	int out_n = clip(out, clip_out); 
 
 	Mat4 vp = r->vs_u->viewport;
-	for(int i = 0; i < out_n; i++) {
+	for(int i = 0; i < out_n; i++) 
+	{
 		float w_inv = clip_out[i].w_inv;
 		clip_out[i].pos.x *= w_inv;
 		clip_out[i].pos.y *= w_inv;
@@ -114,7 +130,8 @@ static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb,
 	Triangle tri;
 	tri.v[0] = &clip_out[0];
 
-	for(int k = 0; k < num_tris; k++) {	
+	for(int k = 0; k < num_tris; k++) 
+	{	
 		tri.v[1] = &clip_out[k+1];
 		tri.v[2] = &clip_out[k+2];
 
@@ -122,16 +139,17 @@ static void renderer_draw_triangle(Renderer* r, FrameBuffer* fb,
 	}
 }
 
-static void renderer_draw_game_object(Renderer* r, FrameBuffer* fb, GameObj* go) {
-
-	size_t num_triangles = go->mesh->num_triangles;
-	for(size_t t = 0; t < num_triangles; t++) {
-		const size_t tri_idx = 3*t;
-		renderer_draw_triangle(r,fb,go->mesh,go->mat,tri_idx);
+static void draw_game_object(Renderer* r, FrameBuffer* fb, GameObj* go) 
+{
+	for(int t = 0; t < go->mesh->num_triangles; t++) 
+	{
+		const int tri_idx = 3*t;
+		draw_triangle(r,fb,go->mesh,go->mat,tri_idx);
 	}	
 }
 
-static void prepare_per_scene_uniforms(Renderer* r, Scene* scene) {
+static void prepare_per_scene_uniforms(Renderer* r, Scene* scene)
+{
 	const Camera* cam = scene_get_camera(scene);
 	const Transform* tr  = camera_get_transform(cam);
 	float near = camera_get_near(cam); 
@@ -142,7 +160,9 @@ static void prepare_per_scene_uniforms(Renderer* r, Scene* scene) {
 	const int   height   = camera_get_screen_height(cam);
 	const float aspect   = (float)height/(float)width;
 
-	const Mat4  view     = get_view_matrix(tr->position, tr->rotation, tr->scale);
+	const Mat4  view     = get_view_matrix(tr->position, 
+					       tr->rotation, 
+					       tr->scale);
 	const Mat4  proj     = get_projection_matrix(fov, near, far, aspect);
 	const Mat4  viewport = get_viewport_matrix(near, far, width, height);
 
@@ -154,15 +174,18 @@ static void prepare_per_scene_uniforms(Renderer* r, Scene* scene) {
 	r->fs_u->cam_world_pos    = tr->position;
 }
 
-static void prepare_per_game_object_uniforms(Renderer* r, GameObj* go) {
+static void prepare_per_game_object_uniforms(Renderer* r, GameObj* go)
+{
 	const Transform* tr = go->tr;
-	r->vs_u->model      = get_model_matrix(tr->position, tr->rotation, tr->scale);
+	r->vs_u->model      = get_model_matrix(tr->position, 
+					       tr->rotation, 
+					       tr->scale);
 	r->fs_u->base_color = material_get_base_color(go->mat);
 	r->fs_u->tex        = material_get_texture(go->mat);
 }
 
-void renderer_draw_scene(Renderer* r, FrameBuffer* fb, Scene* scene) {
-
+void renderer_draw_scene(Renderer* r, FrameBuffer* fb, Scene* scene) 
+{
 	if(!r || !scene || !scene_get_camera(scene)) return;
 	
 	prepare_per_scene_uniforms(r,scene);
@@ -170,12 +193,12 @@ void renderer_draw_scene(Renderer* r, FrameBuffer* fb, Scene* scene) {
 	const size_t count = scene_get_num_gos(scene);
 	GameObj** gos = scene_get_game_obj_arr(scene);
 
-	for(size_t i = 0; i < count; i++) {
+	for(size_t i = 0; i < count; i++) 
+	{
 		GameObj* go = gos[i];
 		if(!go || !go->mesh || !go->mat) continue;
 		prepare_per_game_object_uniforms(r, go);
-		renderer_draw_game_object(r, fb, go);
+		draw_game_object(r, fb, go);
 	}
-
 }
 

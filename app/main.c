@@ -22,7 +22,7 @@ void on_init(App* app, void* game_data) {
 
 	// wall material
 	Texture* tex = png_load("assets/textures/brickwall.png");		
-	Pipeline* p_wall = pipeline_create(vs_default, fs_lit);
+	Pipeline* p_wall = pipeline_create(vs_default, fs_unlit);
 
 	Vec4f col = (Vec4f){1.0f,0.0f,1.0f,1.0f};
 	Material* m_wall = material_create(col, tex, p_wall);
