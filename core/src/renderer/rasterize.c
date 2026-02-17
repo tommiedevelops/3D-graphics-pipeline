@@ -16,17 +16,23 @@ Vec2i vec2i_sub(Vec2i a, Vec2i b){
 void rasterize_pixel(Vec2i P,BaryCoords b, FSin* out, VSout* v[3]) {
 
 	// Depth (Screen Space Z)
-	const float depth = bary_mix1(b, v[0]->pos.z, v[1]->pos.z, v[2]->pos.z);	
+	const float depth 
+			= bary_mix1(b, v[0]->pos.z, v[1]->pos.z, v[2]->pos.z);	
+
 	// Perspective Correct Attributes
-	const float w_inv = bary_mix1(b, v[0]->w_inv, v[1]->w_inv, v[2]->w_inv);
+	const float w_inv 
+			= bary_mix1(b, v[0]->w_inv, v[1]->w_inv, v[2]->w_inv);
+
 	const Vec2f uv_over_w 
-		= bary_mix2(b, v[0]->uv_over_w, v[1]->uv_over_w, v[2]->uv_over_w);
+	      = bary_mix2(b,v[0]->uv_over_w, v[1]->uv_over_w, v[2]->uv_over_w);
 
 	Vec2f uv = vec2f_scale(uv_over_w, 1.0f/w_inv);
 
 	// Other linearly interpolated values
-	Vec3f normal = vec3f_normalize(bary_mix3(b,v[0]->normal, v[1]->normal, v[2]->normal));
-	Vec3f world_pos  = bary_mix3(b, v[0]->world_pos, v[1]->world_pos, v[2]->world_pos);
+	Vec3f normal = vec3f_normalize(bary_mix3(b,v[0]->normal, 
+				               v[1]->normal, v[2]->normal));
+	Vec3f world_pos  = bary_mix3(b, v[0]->world_pos, 
+			                   v[1]->world_pos, v[2]->world_pos);
 
 	*out = (FSin) {
 		.world_pos = world_pos,
@@ -58,7 +64,8 @@ typedef struct {
 	int step_y; // how the edge changes when y++
 } EdgeStepper;
 
-static inline EdgeStepper make_edge(Vec2i P, Vec2i A, Vec2i B) {
+static inline EdgeStepper make_edge(Vec2i P, Vec2i A, Vec2i B) 
+{
 	Vec2i d = vec2i_sub(B, A);
 	
 	return (EdgeStepper) {
@@ -70,7 +77,9 @@ static inline EdgeStepper make_edge(Vec2i P, Vec2i A, Vec2i B) {
 
 typedef struct { int xmin, ymin, xmax, ymax; } Recti;
 
-static inline bool tri_clamped_bounds(const Triangle* tri, const FrameBuffer* fb, Recti* out) {
+static bool tri_clamped_bounds(const Triangle* tri, const FrameBuffer* fb, 
+		Recti* out) 
+{
 	Bounds b = tri_get_bounds(tri);
 
 	int xmin = max_i(0, (int)ceilf(b.xmin));
@@ -83,11 +92,15 @@ static inline bool tri_clamped_bounds(const Triangle* tri, const FrameBuffer* fb
 	return true;
 }
 
-static inline void compute_bary_coords(BaryCoords* out, int e12, int e20, int e01, int area) {
+static inline void compute_bary_coords(BaryCoords* out, int e12, 
+						int e20, int e01, int area) 
+{
 	*out = (BaryCoords){(float)e12/area, (float)e20/area, (float)e01/area};
 }
 
-void rasterize_triangle(Renderer* r, FrameBuffer* fb, Triangle* tri, FragShaderF frag_shader) {
+void rasterize_triangle(Renderer* r, FrameBuffer* fb, Triangle* tri, 
+			FragShaderF frag_shader) 
+{
 	
 	FSin  fs_in;
 	FSout fs_out;
@@ -107,18 +120,23 @@ void rasterize_triangle(Renderer* r, FrameBuffer* fb, Triangle* tri, FragShaderF
 	int area = edge_func(V0, V1, V2);
 	BaryCoords b;
 
-	for(P.y = box.ymin; P.y <= box.ymax; P.y++){
+	for(P.y = box.ymin; P.y <= box.ymax; P.y++)
+	{
 		int e01_xy = e01.e_row;		
 		int e12_xy = e12.e_row;
 		int e20_xy = e20.e_row;
 			
-		for(P.x = box.xmin; P.x <= box.xmax; P.x++){
-			if(inside_triangle(e01_xy,e12_xy,e20_xy)) {
-				compute_bary_coords(&b, e12_xy, e20_xy, e01_xy, area);
+		for(P.x = box.xmin; P.x <= box.xmax; P.x++)
+		{
+			if(inside_triangle(e01_xy,e12_xy,e20_xy)) 
+			{
+				compute_bary_coords(&b, e12_xy, e20_xy, 
+					            e01_xy, area);
 				rasterize_pixel(P,b,&fs_in,tri->v);
 				frag_shader(&fs_in, &fs_out, r->fs_u);
+				uint32_t col = vec4f_to_rgba32(fs_out.color);
 				frame_buffer_draw_pixel(fb,P.x,P.y,
-					vec4f_to_rgba32(fs_out.color),fs_out.depth);
+					                  col,fs_out.depth);
 			}
 
 			e01_xy += e01.step_x;
