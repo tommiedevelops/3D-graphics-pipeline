@@ -12,6 +12,8 @@ typedef struct GameData {
 	float time;
 } GameData;
 
+#define BUNNY
+#ifdef PLANE
 void on_init(App* app, void* game_data) {
 	/* for preparing Assets */
 
@@ -28,6 +30,26 @@ void on_init(App* app, void* game_data) {
 	Material* m_wall = material_create(col, tex, p_wall);
 	assets_add_material(app->assets, m_wall, "floor");
 }
+#endif
+
+#ifdef BUNNY
+void on_init(App* app, void* game_data) {
+	/* for preparing Assets */
+
+	// plane mesh
+	Mesh* plane_mesh = mesh_parse_from_obj("assets/models/bunny.obj");
+	assets_add_mesh(app->assets, plane_mesh, "plane");
+	mesh_recalculate_normals(plane_mesh);
+
+	// wall material
+	Texture* tex = png_load("assets/textures/brickwall.png");		
+	Pipeline* p_wall = pipeline_create(vs_default, fs_lit);
+
+	Vec4f col = (Vec4f){1.0f,0.0f,1.0f,1.0f};
+	Material* m_wall = material_create(col, NULL, p_wall);
+	assets_add_material(app->assets, m_wall, "floor");
+}
+#endif
 
 static Camera* setup_camera(){
 	// Camera Setup
@@ -68,7 +90,12 @@ void on_start(App* app, void* game_data) {
 	Mesh *mesh = assets_get_mesh(app->assets, "plane");
 	Material *mat = assets_get_material(app->assets, "floor");
 
+#ifdef PLANE
 	Quat rot = quat_angle_axis(-3.14/2, VEC3F_X);
+#endif
+#ifdef BUNNY
+	Quat rot = QUAT_IDENTITY;
+#endif
 	GameObj* floor = game_obj_create
 		         (
 				transform_create(VEC3F_0, rot, VEC3F_1),

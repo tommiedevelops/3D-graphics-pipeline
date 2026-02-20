@@ -90,19 +90,14 @@ static inline EdgeStepper make_edge(Vec2i P, Vec2i A, Vec2i B)
 
 typedef struct { int xmin, ymin, xmax, ymax; } Recti;
 
-static bool tri_clamped_bounds(const Triangle* tri, const FrameBuffer* fb, 
-		Recti* out) 
+static Recti convert_bounds_to_ints(Bounds3 b)
 {
-	Bounds b = tri_get_bounds(tri);
-
-	int xmin = max_i(0, (int)ceilf(b.xmin));
-	int ymin = max_i(0, (int)ceilf(b.ymin));
-	int xmax = min_i(fb->width - 1, (int)floorf(b.xmax));
-	int ymax = min_i(fb->height - 1, (int)floorf(b.ymax)); 
-
-	if(xmin > xmax || ymin > ymax) return false;
-	*out = (Recti){ xmin, ymin, xmax, ymax};
-	return true;
+	Recti r;
+	r.xmin = (int)b.xmin;
+	r.xmax = (int)(b.xmax + 0.5f);
+	r.ymin = (int)b.ymin;
+	r.ymax = (int)(b.ymax + 0.5f);
+	return r;
 }
 
 void rasterize_triangle( Renderer* r
@@ -114,9 +109,8 @@ void rasterize_triangle( Renderer* r
 	
 	FSin  fs_in;
 	FSout fs_out;
-	
-	Recti box;
-	if(!tri_clamped_bounds(tri, fb, &box)) return;
+
+	Recti box = convert_bounds_to_ints(tri_get_bounds(tri));	
 
 	Vec2i V0 = to_pixel_center(tri->v[0]->pos); 
 	Vec2i V1 = to_pixel_center(tri->v[1]->pos); 

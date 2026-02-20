@@ -14,8 +14,7 @@
 	.zmin = FLT_MAX, .zmax = -FLT_MAX 	\
 	}
 
-
-typedef struct Bounds {
+typedef struct Bounds3 {
 	float xmin, xmax;
 	float ymin, ymax;
 	float zmin, zmax;
