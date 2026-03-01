@@ -127,26 +127,18 @@ void rasterize_triangle( Renderer* r
 		for(P.x = box.xmin; P.x <= box.xmax; P.x++)
 		{
 
-			bool condition =  e01_xy > 0 
-				       && e12_xy > 0 
-				       && e20_xy > 0;
+			bool inside_tri =  e01_xy >= 0 
+				       && e12_xy >= 0 
+				       && e20_xy >= 0;
 
-			if(!cull_backface) 
-			{
-				condition = condition 
-					  || e01_xy < 0 
-					  && e12_xy < 0
-					  && e20_xy < 0;
-			}
-
-			if(condition)
+			if(inside_tri)
 			{
 				BaryCoords b = {e12_xy, e20_xy, e01_xy};
 				rasterize_pixel(P,b,&fs_in,tri->v);
 				frag_shader(&fs_in, &fs_out, r->fs_u);
 				uint32_t col = vec4f_to_rgba32(fs_out.color);
 				frame_buffer_draw_pixel(fb,P.x,P.y,
-					                  col,fs_out.depth);
+					                col,fs_out.depth);
 			}
 
 			e01_xy += e01.step_x;

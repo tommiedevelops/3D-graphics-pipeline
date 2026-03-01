@@ -39,7 +39,7 @@ void renderer_destroy(Renderer* r)
 	free(r);
 }
 
-static void assemble_triangle_inputs(const Mesh* const mesh, 
+static void assemble_vertex_shader_input_from_tri(const Mesh* const mesh, 
 			                          int tri_idx, VSin in[3]) 
 {
 	for(int i = 0; i < 3; i++)
@@ -74,54 +74,55 @@ static void assemble_triangle_inputs(const Mesh* const mesh,
 	}
 }
 
-static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,  
-		          Material* mat, int tri_idx) 
+static void draw_triangle(
+		  	Renderer*    r,      // use this renderer 
+		  	FrameBuffer* fb,     // output to this framebuffer
+		  	Mesh*        mesh,   // draw this mesh
+	          	Material*    mat,    // with this material
+		  	int          tri_idx // this particular triangle of the mesh
+			) 
 {
-
-	// try to get pipeline from material, otherwise use renderer default
 	VertShaderF vert_shader = mat->vert_shader;
 	FragShaderF frag_shader = mat->frag_shader;
 
-
-	// input and output of the vertex shader
+	// vertex shader input and output
 	VSin  vs_in[3];
 	VSout vs_out[3];
 
-	assemble_triangle_inputs(mesh, tri_idx, vs_in);
+	assemble_vertex_shader_input_from_tri(mesh, tri_idx, vs_in);
 
+	// apply the vertex shader and save perspective correct attributes
 	for(int i = 0; i < 3; i++) 
 	{
-		vert_shader(&vs_in[i], &vs_out[i], r->vs_u); // apply vertex shader
-		// save perspective correct interpolation values
-		vs_out[i].w_inv = 1.0f/vs_out[i].pos.w;
+		vert_shader(&vs_in[i], &vs_out[i], r->vs_u);
 
+		vs_out[i].w_inv = 1.0f/vs_out[i].pos.w;
 		vs_out[i].uv_over_w = vec2f_scale( vs_out[i].uv,
 			       		           vs_out[i].w_inv
 			              );
-
 		vs_out[i].n_over_w = vec3f_scale( vs_out[i].normal,
 						  vs_out[i].w_inv
 				     );
 	}
 
-	// size 16 to ensure enough space for more verts after clip
+	// clip the vertex shader output against the clipping planes
 	VSout clip_out[16] = {0};
 	int clip_out_n = 0;
 
 	clip_tri_against_clip_planes(vs_out, clip_out, &clip_out_n); 
 
+	// apply the perspective divide and viewport transformation operations
 	Mat4 vp = r->vs_u->viewport;
 	for(int i = 0; i < clip_out_n; i++) 
 	{
 		VSout* vert = &clip_out[i];
-		// perspective divide
 		vert->pos = vec4f_scale(vert->pos, vert->w_inv);
-		// viewport matrix
 		vert->pos = mat4_mul_vec4(vp, vert->pos);
 	}	
 
 	int num_tris = clip_out_n < 2 ? 0: clip_out_n - 2;
 
+	// re-assemble the clipped vertices into triangles and rasterize
 	Triangle tri;
 	tri.v[0] = &clip_out[0];
 
@@ -129,6 +130,7 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 	{	
 		tri.v[1] = &clip_out[k+1];
 		tri.v[2] = &clip_out[k+2];
+		tri.id = k;
 		rasterize_triangle(r,fb,&tri,frag_shader);
 	}
 }
@@ -190,6 +192,9 @@ void renderer_draw_scene(Renderer* r, FrameBuffer* fb, Scene* scene)
 
 	for(size_t i = 0; i < count; i++) 
 	{
+#ifdef DEBUG
+	printf("gameobject: %ld\n\n", i);
+#endif
 		GameObj* go = gos[i];
 		if(!go || !go->mesh || !go->mat) continue;
 		prepare_per_game_object_uniforms(r, go);

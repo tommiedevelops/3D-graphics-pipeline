@@ -47,7 +47,6 @@ Mat4 get_projection_matrix(float fov, float near, float far, float aspect) {
 	P.m[2][2] = (float)-1.0f*far/ (near - far);
 	P.m[2][3] = (float)(near)*far/(near-far); 
 	P.m[3][2] = 1.0f;
-
 	return P;
 }
 

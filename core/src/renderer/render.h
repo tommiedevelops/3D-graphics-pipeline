@@ -19,15 +19,9 @@ typedef struct RenderPass {
 	FrameBuffer* fb;
 } RenderPass;
 
-typedef struct Pipeline {
-	VertShaderF vs;
-	FragShaderF fs;
-} Pipeline;
-
 typedef struct Renderer { 
 	VSUniforms* vs_u;
 	FSUniforms* fs_u;
-	Pipeline* p;
 } Renderer;
 
 Renderer* renderer_create();
