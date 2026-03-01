@@ -11,24 +11,17 @@
 
 typedef struct Texture Texture;
 
-Material* material_default(){
-	Material* mat = malloc(sizeof(Material));
-	memset(mat,0x0,sizeof(Material));
-	mat->color = VEC4F_1;
-	mat->pipeline = NULL;
-	return mat;
-}
-
-Material* material_create(Vec4f color, Texture* tex, Pipeline* p){
+Material* material_create(Vec4f color, Texture* tex,
+			  VertShaderF vs, FragShaderF fs){
 	Material* mat = malloc(sizeof(Material));
 	mat->color = color;
 	mat->texture = tex;
-	mat->pipeline = p;
+	mat->vert_shader = vs;
+	mat->frag_shader = fs;
 	return mat;
 }
 
 void material_destroy(Material* mat) {
-	pipeline_destroy(mat->pipeline);
 	texture_destroy(mat->texture);
 	free(mat);
 }
@@ -54,6 +47,3 @@ Vec4f material_get_albedo(struct Material* mat, Vec2f uv) {
 	return texture_sample(mat->texture, uv.x, uv.y);
 }
 
-Pipeline* material_get_pipeline(Material* mat) {
-	return mat->pipeline;
-}

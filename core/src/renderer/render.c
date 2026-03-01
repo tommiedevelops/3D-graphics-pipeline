@@ -21,12 +21,11 @@
 #include "scene_manager/scene.h"
 #include "scene_manager/transform.h"
 
-Renderer* renderer_create(Pipeline* default_pl) 
+Renderer* renderer_create() 
 {
 	Renderer*   r    = malloc(sizeof(Renderer));
 	VSUniforms* vs_u = malloc(sizeof(VSUniforms));
 	FSUniforms* fs_u = malloc(sizeof(FSUniforms));
-	r->p    = default_pl;	
 	r->vs_u = vs_u;
 	r->fs_u = fs_u;
 	return r;
@@ -39,16 +38,6 @@ void renderer_destroy(Renderer* r)
 	free(r->fs_u);
 	free(r);
 }
-
-Pipeline* pipeline_create(VertShaderF vert_shader, FragShaderF frag_shader) 
-{
-	Pipeline* p = malloc(sizeof(Pipeline));
-	p->vs = vert_shader;
-	p->fs = frag_shader;
-	return p;
-}
-
-void pipeline_destroy(Pipeline* p) { free(p); }
 
 static void assemble_triangle_inputs(const Mesh* const mesh, 
 			                          int tri_idx, VSin in[3]) 
@@ -90,10 +79,8 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 {
 
 	// try to get pipeline from material, otherwise use renderer default
-	const Pipeline* mat_p = material_get_pipeline(mat);
-	const Pipeline* p     = mat_p ? mat_p : r->p; 
-
-	VertShaderF vert_shader = p->vs;
+	VertShaderF vert_shader = mat->vert_shader;
+	FragShaderF frag_shader = mat->frag_shader;
 
 
 	// input and output of the vertex shader
@@ -142,7 +129,7 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 	{	
 		tri.v[1] = &clip_out[k+1];
 		tri.v[2] = &clip_out[k+2];
-		rasterize_triangle(r,fb,&tri,p->fs);
+		rasterize_triangle(r,fb,&tri,frag_shader);
 	}
 }
 
