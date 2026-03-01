@@ -36,7 +36,8 @@ void frame_buffer_draw_pixel(FrameBuffer* fb, int x, int y, uint32_t color, floa
 	if(x <= 0 || x >= fb->width) return;
 	if(y <= 0 || y >= fb->height) return;
 
-	if(depth <= fb->zbuffer[x + y*fb->width]) {
+	if(depth <= fb->zbuffer[x + y*fb->width]) 
+	{
 		fb->framebuffer[x + y*fb->width] = color;
 		fb->zbuffer[x + y*fb->width] = depth;
 	}

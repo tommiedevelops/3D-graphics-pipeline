@@ -88,9 +88,13 @@ static void assemble_triangle_inputs(const Mesh* const mesh,
 static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,  
 		          Material* mat, int tri_idx) 
 {
+
 	// try to get pipeline from material, otherwise use renderer default
 	const Pipeline* mat_p = material_get_pipeline(mat);
 	const Pipeline* p     = mat_p ? mat_p : r->p; 
+
+	VertShaderF vert_shader = p->vs;
+
 
 	// input and output of the vertex shader
 	VSin  vs_in[3];
@@ -100,7 +104,7 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 
 	for(int i = 0; i < 3; i++) 
 	{
-		p->vs(&vs_in[i], &vs_out[i], r->vs_u); // apply vertex shader
+		vert_shader(&vs_in[i], &vs_out[i], r->vs_u); // apply vertex shader
 		// save perspective correct interpolation values
 		vs_out[i].w_inv = 1.0f/vs_out[i].pos.w;
 
@@ -113,16 +117,6 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 				     );
 	}
 
-#ifdef  DEBUG
-	printf("original triangle %d\n", tri_idx);
-	for(int i = 0; i < 3; ++i) 
-	{
-		print_vsout(&vs_out[i]);
-		printf("\n");
-	}
-	printf("\n");
-
-#endif
 	// size 16 to ensure enough space for more verts after clip
 	VSout clip_out[16] = {0};
 	int clip_out_n = 0;
@@ -133,32 +127,21 @@ static void draw_triangle(Renderer* r, FrameBuffer* fb, Mesh* mesh,
 	for(int i = 0; i < clip_out_n; i++) 
 	{
 		VSout* vert = &clip_out[i];
+		// perspective divide
 		vert->pos = vec4f_scale(vert->pos, vert->w_inv);
+		// viewport matrix
 		vert->pos = mat4_mul_vec4(vp, vert->pos);
 	}	
 
 	int num_tris = clip_out_n < 2 ? 0: clip_out_n - 2;
 
 	Triangle tri;
-
-#ifdef DEBUG
-	printf("clipped triangle %d\n", tri_idx);
-#endif
-
 	tri.v[0] = &clip_out[0];
 
 	for(int k = 0; k < num_tris; k++) 
 	{	
 		tri.v[1] = &clip_out[k+1];
 		tri.v[2] = &clip_out[k+2];
-#ifdef  DEBUG
-	for(int i = 0; i < 3; ++i) 
-	{
-		print_vsout(tri.v[i]);
-		printf("\n");
-	}
-	printf("\n");
-#endif
 		rasterize_triangle(r,fb,&tri,p->fs);
 	}
 }
@@ -218,9 +201,6 @@ void renderer_draw_scene(Renderer* r, FrameBuffer* fb, Scene* scene)
 	const size_t count = scene_get_num_gos(scene);
 	GameObj** gos = scene_get_game_obj_arr(scene);
 
-#ifdef DEBUG
-printf("frame\n");
-#endif
 	for(size_t i = 0; i < count; i++) 
 	{
 		GameObj* go = gos[i];
