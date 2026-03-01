@@ -12,45 +12,22 @@ typedef struct GameData {
 	float time;
 } GameData;
 
-#define BUNNY
-#ifdef PLANE
 void on_init(App* app, void* game_data) {
 	/* for preparing Assets */
 
 	// plane mesh
-	Mesh* plane_mesh = mesh_parse_from_obj("assets/models/plane.obj");
+	Mesh* plane_mesh = mesh_parse_from_obj("assets/models/bunny.obj");
 	assets_add_mesh(app->assets, plane_mesh, "plane");
 	mesh_recalculate_normals(plane_mesh);
 
-	// wall material
-	Texture* tex = png_load("assets/textures/brickwall.png");		
-	Pipeline* p_wall = pipeline_create(vs_default, fs_unlit);
-
 	Vec4f col = (Vec4f){1.0f,0.0f,1.0f,1.0f};
-	Material* m_wall = material_create(col, tex, p_wall);
-	assets_add_material(app->assets, m_wall, "floor");
+	Vec4f col2 = (Vec4f){0.0f,1.0f,1.0f,1.0f};
+
+	Material* m_pink = material_create(col, NULL, vs_default, fs_toon);
+	Material* m_blue = material_create(col2, NULL, vs_default, fs_lit);
+	assets_add_material(app->assets, m_pink, "pink");
+	assets_add_material(app->assets, m_blue, "blue");
 }
-#endif
-
-#ifdef BUNNY
-void on_init(App* app, void* game_data) {
-	/* for preparing Assets */
-
-	// plane mesh
-	Mesh* plane_mesh = mesh_parse_from_obj("assets/models/fold.obj");
-	assets_add_mesh(app->assets, plane_mesh, "plane");
-	mesh_recalculate_normals(plane_mesh);
-
-	// wall material
-	Texture* tex = png_load("assets/textures/brickwall.png");		
-	Pipeline* p_wall = pipeline_create(vs_default, fs_lit);
-
-	Vec4f col = (Vec4f){1.0f,0.0f,1.0f,1.0f};
-	Material* m_wall = material_create(col, NULL, p_wall);
-	m_wall->cull_backface = false; // turn off backface culling
-	assets_add_material(app->assets, m_wall, "floor");
-}
-#endif
 
 static Camera* setup_camera(){
 	// Camera Setup
@@ -61,7 +38,7 @@ static Camera* setup_camera(){
 }
 
 static Light* setup_light(){
-	Vec3f light_dir = (Vec3f){-0.5f, -1.0f, 0.0f};
+	Vec3f light_dir = (Vec3f){1.5f, -0.5f, 0.0f};
 	Vec4f light_col = (Vec4f){235.0f/255.0f, 80.0f/255.0f, 211/255.0f, 1.0f};
 	Light* light = light_create(light_dir, VEC4F_1);
 	return light;
@@ -89,21 +66,27 @@ void on_start(App* app, void* game_data) {
 	init_scene(app, game_data);
 
 	Mesh *mesh = assets_get_mesh(app->assets, "plane");
-	Material *mat = assets_get_material(app->assets, "floor");
+	Material *pink = assets_get_material(app->assets, "pink");
+	Material *blue = assets_get_material(app->assets, "blue");
 
-#ifdef PLANE
-	Quat rot = quat_angle_axis(-3.14/2, VEC3F_X);
-#endif
-#ifdef BUNNY
+//	Quat rot = quat_angle_axis(-3.14/2, VEC3F_X);
 	Quat rot = QUAT_IDENTITY;
-#endif
+
 	GameObj* floor = game_obj_create
 		         (
 				transform_create(VEC3F_0, rot, VEC3F_1),
-				mesh, mat
+				mesh, pink
 			 );
 
-	scene_add_game_obj(app->scene, floor, "plane");
+	Vec3f wall_pos = vec3f_create(1.0f, 0.0f, -3.0f);
+
+	GameObj* wall = game_obj_create(
+				transform_create(wall_pos, rot, VEC3F_1),
+				mesh, blue
+			);
+
+	scene_add_game_obj(app->scene, floor, "pink");
+	//scene_add_game_obj(app->scene, wall, "blue");
 }
 
 void on_event(App* app, void* game_data, SDL_Event* e) {
@@ -198,10 +181,8 @@ void on_update(App* app, void* game_data, float dt) {
 
 	Scene* scene = app->scene;
 	Camera* cam = scene_get_camera(scene);
-
-	GameObj* go = scene_get_game_obj(scene, "plane");
+	GameObj* go = scene_get_game_obj(scene, "pink");
 	rotate_go(go, dt);
-
 	handle_movement(cam->transform, gd, dt);
 }
 

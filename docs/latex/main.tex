@@ -23,7 +23,7 @@
 
 % METADATA %
 \author{Thomas Dizon (@tommiedevelops)}
-\title{The 3D Graphics Pipeline, in Pure C}
+\title{Mini Graphics Engine, in Pure C}
 
 % CONTENT %
 \begin{document}
@@ -74,28 +74,18 @@
 \item Right now, it depends on the C standard library, \href{https://github.com/nothings/stb/blob/master/stb_image.h}{std\_image.h} for dealing with .png files and \href{https://www.libsdl.org/}{SDL2}  for handling all the OS level stuff like inputs and writing to the screen. Though you could easily replace SDL with any other library which creates Windows for you like RayLib.
 \end{itemize}
 
-\section{System Design}
-\subsection{Diagram}
-
-\subsection{Overview}
-\begin{itemize}
-	\item Scene Manager
-	\item Asset Manager
-	\item Renderer
-	\item Game Math
-	\item Application
-	\item Platform
-	\item Third Party
-\end{itemize}
-
 \section{3D Geometry in Memory}
 
+\subsection{How 3D Objects Are Stored}
 \begin{itemize}
 	\item In computer memory, 3D objects are represented as a collection of vertices and triangles. A vertex is a point in 3D space defined by its x, y and z coordinates. A triangle is a primitive that consists of three vertices and represents a flat surface in 3D space. By connecting multiple triangles together, we can create complex 3D shapes and models. This method of representing 3D geometry is efficient and widely used in computer graphics, allowing for the creation of detailed and realistic virtual environments.
 
+\end{itemize}
+
+\subsection{3D Mesh}
+\begin{itemize}
 	\item In this project, I store 3D objects as  \href{https://en.wikipedia.org/wiki/Wavefront_.obj_file}{Wavefront .obj files}.  
 	\item I have a dedicated .obj parser which converts a .obj file into a 3D Mesh in program memory.
-	\item 
 \end{itemize}
 
 \section{Coordinate Spaces}
