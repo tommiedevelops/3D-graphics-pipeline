@@ -178,7 +178,6 @@ static void prepare_per_game_object_uniforms(Renderer* r, GameObj* go)
 					       tr->scale);
 	r->fs_u->base_color    = material_get_base_color(go->mat);
 	r->fs_u->tex           = material_get_texture(go->mat);
-	r->fs_u->cull_backface = go->mat->cull_backface;
 }
 
 void renderer_draw_scene(Renderer* r, FrameBuffer* fb, Scene* scene) 

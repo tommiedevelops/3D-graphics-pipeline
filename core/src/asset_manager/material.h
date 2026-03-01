@@ -14,7 +14,6 @@ typedef struct Material {
 	Vec4f diffuse;
 	Vec4f specular;
 	const char* handle;
-	bool cull_backface;
 	VertShaderF vert_shader;
 	FragShaderF frag_shader;
 } Material;

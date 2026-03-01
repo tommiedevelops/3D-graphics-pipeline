@@ -23,7 +23,6 @@ typedef struct {
 	Vec4f base_color;
 	Texture* tex;
 	Light* light;
-	bool cull_backface;
 } FSUniforms;
 
 typedef void (*FragShaderF)(const FSin* in, FSout* out, const FSUniforms* u);	

@@ -116,8 +116,6 @@ void rasterize_triangle( Renderer* r
 	EdgeStepper e12 = make_edge(P, V1, V2);
 	EdgeStepper e20 = make_edge(P, V2, V0);
 
-	bool cull_backface = r->fs_u->cull_backface;
-
 	for(P.y = box.ymin; P.y <= box.ymax; P.y++)
 	{
 		int e01_xy = e01.e_row;		
