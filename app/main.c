@@ -16,6 +16,7 @@ void on_init(App* app, void* game_data) {
 	/* for preparing Assets */
 
 	// plane mesh
+	Texture* brick_tex = png_load("assets/textures/brickwall.png");
 	Mesh* bunny_mesh = mesh_parse_from_obj("assets/models/bunny.obj");
 	Mesh* plane_mesh = mesh_parse_from_obj("assets/models/plane.obj");
 	assets_add_mesh(app->assets, plane_mesh, "plane");
@@ -27,7 +28,7 @@ void on_init(App* app, void* game_data) {
 	Vec4f col2 = (Vec4f){0.0f,1.0f,1.0f,1.0f};
 
 	Material* m_pink = material_create(col, NULL, vs_default, fs_toon);
-	Material* m_blue = material_create(col2, NULL, vs_default, fs_lit);
+	Material* m_blue = material_create(col2, brick_tex, vs_default, fs_unlit);
 	assets_add_material(app->assets, m_pink, "pink");
 	assets_add_material(app->assets, m_blue, "blue");
 }
@@ -73,7 +74,7 @@ void on_start(App* app, void* game_data) {
 	Material *pink = assets_get_material(app->assets, "pink");
 	Material *blue = assets_get_material(app->assets, "blue");
 
-	Quat rot_90y = quat_angle_axis(-3.14/2, VEC3F_X);
+	Quat rot_90x = quat_angle_axis(-3.14/2, VEC3F_X);
 	Quat rot = QUAT_IDENTITY;
 
 	const float height_above_ground = 0.3f;
@@ -85,12 +86,12 @@ void on_start(App* app, void* game_data) {
 		
 	Vec3f floor_scale = (Vec3f){3.0f, 1.0f, 3.0f};
 	GameObj* floor = game_obj_create(
-				transform_create(VEC3F_0, QUAT_IDENTITY, VEC3F_1),
+				transform_create(VEC3F_0, rot_90x, floor_scale),
 				plane_mesh, blue
 			);
 
 	scene_add_game_obj(app->scene, floor, "floor");
-	scene_add_game_obj(app->scene, bunny, "bunny");
+//	scene_add_game_obj(app->scene, bunny, "bunny");
 }
 
 void on_event(App* app, void* game_data, SDL_Event* e) {
@@ -186,7 +187,9 @@ void on_update(App* app, void* game_data, float dt) {
 	Scene* scene = app->scene;
 	Camera* cam = scene_get_camera(scene);
 	GameObj* go = scene_get_game_obj(scene, "bunny");
-	rotate_go(go, dt);
+
+	if(go)	rotate_go(go, dt);
+
 	handle_movement(cam->transform, gd, dt);
 }
 
