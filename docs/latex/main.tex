@@ -23,6 +23,7 @@
 
 % METADATA %
 \author{Thomas Dizon (@tommiedevelops)}
+\date{}
 \title{Mini Graphics Engine, in Pure C}
 
 % CONTENT %
@@ -37,6 +38,20 @@
 \end{figure}
 
 \newpage
+\section*{Note from the Author}
+
+\begin{itemize}
+	\item Thanks for deciding to read this document! I hope you find it useful and informative. If you have any questions, comments or suggestions, please feel free to reach out to me at thomasjdizon@gmail.com.
+
+\item I tend to like writing in a casual and conversational style, so I hope that makes the content more approachable and easier to understand. 
+\item I also prefer to write with dot points instead of conventional paragraphs as I find it makes it easier to separate points of concern and makes the content more digestible.
+
+\item This project is a work in progress and I will be updating this document as I continue to work on the project. So if you find any errors or have any suggestions for improvement, please let me know!
+\end{itemize}
+
+\hfill \textbf{Thomas}
+
+\newpage
 
 \tableofcontents
 
@@ -44,7 +59,22 @@
 
 \section{Introduction}
 
-\subsection{Motivation}
+\subsection{What is a Graphics Engine?}
+\begin{itemize}
+	\item We can think of a modern computer as Memory, a Computation Unit and a Screen.
+	\item A Graphics Engine is a process that allows a programmer to store 3D objects in memory, perform custom computation on those objects and render the objects to the screen.
+\end{itemize}
+
+%mental model diagram
+\begin{figure}[htbp]
+	\centering
+
+	\begin{tikzpicture}[]
+		\filldraw[draw=black, fill=white] (2,0) rectangle (\textwidth,5);
+	\end{tikzpicture}
+\end{figure}
+
+\subsection{Why build it from scratch?}
 \begin{itemize}
 \item As someone interested in developing 3D games and graphics, I was frustrated with how much I didn't understand when I used game engines like Unity and Godot. When I wanted to achieve a simple effect like adding grass, water or natural-looking terrain, I was overwhelmed with my own inability. Thus, I committed myself to building a 3D engine from scratch so I could allow these concepts that I didn't understand emerge naturally as byproducts as I worked towards the goal of rendering 3D objects. 
 \item Now that I've more or less finished the project, it is A LOT easier now to imagine how to achieve some graphical effect like a grass or water shader. Since I understand how it works conceptually under the hood, the programming is a lot easier.
