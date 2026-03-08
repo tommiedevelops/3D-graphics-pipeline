@@ -2,6 +2,7 @@
 #include "frag_shader.h"
 #include "game_math/barycentric.h"
 #include "game_math/bounds.h"
+#include "game_math/color.h"
 #include "triangle.h"
 #include "framebuffer.h"
 
@@ -140,9 +141,13 @@ void rasterize_triangle( Renderer* r
 				rasterize_pixel(P,b,&fs_in,tri->v);
 
 				frag_shader(&fs_in, &fs_out, r->fs_u);
-				uint32_t col = vec4f_to_rgba32(fs_out.color);
-				frame_buffer_draw_pixel(fb,P.x,P.y,col,
-							      fs_out.depth);
+				Color col = vec4f_to_color(fs_out.color);
+				frame_buffer_draw_pixel( fb,
+						 	 P.x,
+							 P.y,
+							 color_earalue(col),
+			    				 fs_out.depth
+				);
 			}
 
 			e01_xy += e01.step_x;

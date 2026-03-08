@@ -1,9 +1,17 @@
 #ifndef COLOR_H
 #define COLOR_H
-typedef struct Color Color;
+#include <stdint.h>
 
+typedef struct Vec4f Vec4f;
+
+typedef struct Color {
+	uint32_t value;
+} Color;
+
+Color vec4f_to_color(Vec4f c);
 Color color_create(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-Color color_create(float r, float g, float b, float a);
+
+uint32_t color_value(Color col);
 
 #endif
 
