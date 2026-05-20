@@ -9,12 +9,15 @@
 \def\@LN@column{1}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{5}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}What is a Graphics Engine?}{5}{subsection.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces A mental model of a graphics engine. The programmer interacts with the graphics engine through an API which allows them to create and manipulate 3D objects in memory and then render those objects to the screen. The graphics engine is responsible for managing the memory of the 3D objects, performing computations on those objects and ultimately rendering them to the screen.}}{5}{figure.caption.4}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:mental-model-1}{{2}{5}{A mental model of a graphics engine. The programmer interacts with the graphics engine through an API which allows them to create and manipulate 3D objects in memory and then render those objects to the screen. The graphics engine is responsible for managing the memory of the 3D objects, performing computations on those objects and ultimately rendering them to the screen}{figure.caption.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Why build it from scratch?}{5}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}The scope of a \textit  {Graphics Engine}}{5}{subsection.1.3}\protected@file@percent }
 \def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}The scope of a \textit  {Graphics Engine}}{6}{subsection.1.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Why \textit  {C}?}{6}{subsection.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}What does the project depend on?}{6}{subsection.1.5}\protected@file@percent }
 \def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}What does the project depend on?}{7}{subsection.1.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}3D Geometry in Memory}{7}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}How 3D Objects Are Stored}{7}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}3D Mesh}{7}{subsection.2.2}\protected@file@percent }
@@ -41,19 +44,18 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.1}What is \textit  {Perspective}?}{9}{subsubsection.4.5.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.2}The View Frustum}{9}{subsubsection.4.5.2}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The View Frustum in View Space}}{10}{figure.caption.5}\protected@file@percent }
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:view-frustum}{{2}{10}{The View Frustum in View Space}{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The View Frustum in View Space}}{10}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:view-frustum}{{3}{10}{The View Frustum in View Space}{figure.caption.5}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.3}Deriving the Projection Matrix}{10}{subsubsection.4.5.3}\protected@file@percent }
 \def\@LN@column{1}
-\newlabel{fig:2d-frustum-yz}{{\caption@xref {??}{ on input line 258}}{11}{Deriving the Projection Matrix}{figure.caption.6}{}}
+\newlabel{fig:2d-frustum-yz}{{\caption@xref {??}{ on input line 261}}{11}{Deriving the Projection Matrix}{figure.caption.6}{}}
 \newlabel{sub@fig:2d-frustum-yz}{{}{11}{Deriving the Projection Matrix}{figure.caption.6}{}}
-\newlabel{fig:2d-frustum-xz}{{\caption@xref {??}{ on input line 264}}{11}{Deriving the Projection Matrix}{figure.caption.6}{}}
+\newlabel{fig:2d-frustum-xz}{{\caption@xref {??}{ on input line 267}}{11}{Deriving the Projection Matrix}{figure.caption.6}{}}
 \newlabel{sub@fig:2d-frustum-xz}{{}{11}{Deriving the Projection Matrix}{figure.caption.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Side by side graps of the x-z slice and y-z slice of the view frustum showing the how the projected image is calculated on the near plane}}{11}{figure.caption.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Side by side graps of the x-z slice and y-z slice of the view frustum showing the how the projected image is calculated on the near plane}}{11}{figure.caption.6}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The view frustum from the perspective of the Camera}}{12}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:frustum-front}{{4}{12}{The view frustum from the perspective of the Camera}{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The view frustum from the perspective of the Camera}}{12}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:frustum-front}{{5}{12}{The view frustum from the perspective of the Camera}{figure.caption.7}{}}
 \def\@LN@column{1}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.4}Perspective Divide}{13}{subsubsection.4.5.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Deriving The Viewport Matrix}{13}{subsection.4.6}\protected@file@percent }

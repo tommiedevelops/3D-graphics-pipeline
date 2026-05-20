@@ -1,9 +1,9 @@
 \contentsline {section}{\numberline {1}Introduction}{5}{section.1}%
 \contentsline {subsection}{\numberline {1.1}What is a Graphics Engine?}{5}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Why build it from scratch?}{5}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}The scope of a \textit {Graphics Engine}}{5}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.3}The scope of a \textit {Graphics Engine}}{6}{subsection.1.3}%
 \contentsline {subsection}{\numberline {1.4}Why \textit {C}?}{6}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}What does the project depend on?}{6}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.5}What does the project depend on?}{7}{subsection.1.5}%
 \contentsline {section}{\numberline {2}3D Geometry in Memory}{7}{section.2}%
 \contentsline {subsection}{\numberline {2.1}How 3D Objects Are Stored}{7}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}3D Mesh}{7}{subsection.2.2}%

@@ -61,8 +61,8 @@
 
 \subsection{What is a Graphics Engine?}
 \begin{itemize}
-	\item We can think of a modern computer as Memory, a Computation Unit and a Screen.
-	\item A Graphics Engine is a process that allows a programmer to store 3D objects in memory, perform custom computation on those objects and render the objects to the screen.
+	\item The goal here is to represent 3D objects on a computer, manipulate those objects in interesting ways and finally render those objects to the screen. 
+	\item The mental model I would like to build upon is like that in Figure \ref{fig:mental-model-1}. We imagine some computer memory, a screen to render onto and a processing unit which is capable of reading and manipulating memory adn writing to the screen.
 \end{itemize}
 
 %mental model diagram
@@ -72,6 +72,9 @@
 	\begin{tikzpicture}[]
 		\filldraw[draw=black, fill=white] (2,0) rectangle (\textwidth,5);
 	\end{tikzpicture}
+
+	\caption{A mental model of a graphics engine. The programmer interacts with the graphics engine through an API which allows them to create and manipulate 3D objects in memory and then render those objects to the screen. The graphics engine is responsible for managing the memory of the 3D objects, performing computations on those objects and ultimately rendering them to the screen.}
+	\label{fig:mental-model-1}
 \end{figure}
 
 \subsection{Why build it from scratch?}
